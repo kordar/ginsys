@@ -5,6 +5,14 @@ import (
 	"net/http"
 )
 
+var (
+	SuccessType      = "success"
+	ErrorType        = "error"
+	OutputType       = "output"
+	UnauthorizedType = "unauthorized"
+	TenantType       = "tenant"
+)
+
 type IResponse interface {
 	HttpStatus() int
 	Result(c *gin.Context, message interface{}, data interface{}, count int64)
