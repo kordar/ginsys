@@ -25,29 +25,41 @@ func ToJson(c *gin.Context, t string, message interface{}, data interface{}, cou
 }
 
 func Data(c *gin.Context, message string, data interface{}, count int64) {
-	ToJson(c, "success", message, data, count)
+	ToJson(c, SuccessType, message, data, count)
 }
 
 func Success(c *gin.Context, message string, data interface{}) {
-	ToJson(c, "success", message, data, -1)
+	ToJson(c, SuccessType, message, data, -1)
 }
 
 func Tenant(c *gin.Context, message string, data interface{}) {
-	ToJson(c, "tenant", message, data, -1)
+	ToJson(c, TenantType, message, data, -1)
 }
 
 func Error(c *gin.Context, err interface{}, data interface{}) {
-	ToJson(c, "error", err, data, -1)
+	ToJson(c, ErrorType, err, data, -1)
+}
+
+func ErrorV(c *gin.Context, err interface{}, data interface{}) {
+	ToJson(c, ValidErrorType, err, data, -1)
 }
 
 func Unauthorized(c *gin.Context, message string, data interface{}) {
-	ToJson(c, "unauthorized", message, data, -1)
+	ToJson(c, UnauthorizedType, message, data, -1)
 }
 
 func SuccessOrError(c *gin.Context, flag bool, successMessage string, err interface{}) {
 	if flag {
-		ToJson(c, "success", successMessage, nil, -1)
+		ToJson(c, SuccessType, successMessage, nil, -1)
 	} else {
-		ToJson(c, "error", err, nil, -1)
+		ToJson(c, ErrorType, err, nil, -1)
+	}
+}
+
+func ErrorOrSuccess(c *gin.Context, err error) {
+	if err == nil {
+		ToJson(c, SuccessType, "success", nil, -1)
+	} else {
+		ToJson(c, ErrorType, err, nil, -1)
 	}
 }

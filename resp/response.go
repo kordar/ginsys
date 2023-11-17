@@ -8,6 +8,7 @@ import (
 var (
 	SuccessType      = "success"
 	ErrorType        = "error"
+	ValidErrorType   = "valid-error"
 	OutputType       = "output"
 	UnauthorizedType = "unauthorized"
 	TenantType       = "tenant"

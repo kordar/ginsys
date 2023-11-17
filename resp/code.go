@@ -25,6 +25,7 @@ var _codes = map[string]int{
 	"excel":        excel,
 	"multitenant":  multitenant,
 	"fail":         fail,
+	"error":        fail,
 	"warn":         warn,
 	"refuse":       refuse,
 	"unauthorized": unauthorized,

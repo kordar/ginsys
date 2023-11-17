@@ -58,15 +58,63 @@ func (e ErrorJsonI18n) Result(c *gin.Context, message interface{}, data interfac
 	if value, ok := message.(error); ok {
 
 		if tmessage := e.I18nMessage(value.Error(), "error", c); tmessage != "" {
-			jsonCall(c, e.HttpStatus(), fail, tmessage, data, count)
+			jsonCall(c, e.HttpStatus(), Code("error"), tmessage, data, count)
 		} else {
-			jsonCall(c, e.HttpStatus(), fail, value.Error(), data, count)
+			jsonCall(c, e.HttpStatus(), Code("error"), value.Error(), data, count)
 		}
 
 		return
 	}
 
-	jsonCall(c, e.HttpStatus(), fail, e.I18nMessage("error", "error", c), data, count)
+	jsonCall(c, e.HttpStatus(), Code("error"), e.I18nMessage("error", "error", c), data, count)
+}
+
+type ErrorJsonI18n2 struct {
+	GetTrans    func(c *gin.Context) (trans ut.Translator, found bool)
+	I18nMessage func(message string, t string, c *gin.Context) string
+	ErrorJson
+}
+
+func (e ErrorJsonI18n2) Result(c *gin.Context, message interface{}, data interface{}, count int64) {
+
+	// 处理文本message
+	if err, ok := message.(string); ok && err != "" {
+		if tmessage := e.I18nMessage(err, ErrorType, c); tmessage != "" {
+			jsonCall(c, e.HttpStatus(), Code("error"), tmessage, data, count)
+		} else {
+			jsonCall(c, e.HttpStatus(), Code("error"), err, data, count)
+		}
+		return
+	}
+
+	// 处理validate error
+	if err, ok := message.(validator.ValidationErrors); ok {
+		nMessage := e.I18nMessage("error.valid", "error", c)
+		if trans, found := e.GetTrans(c); found {
+			tt := err.Translate(trans)
+			if len(tt) > 0 {
+				for _, s := range tt {
+					jsonCall(c, e.HttpStatus(), Code("valid"), s, data, count)
+					return
+				}
+			}
+		}
+		jsonCall(c, e.HttpStatus(), Code("valid"), nMessage, data, count)
+		return
+	}
+
+	// 处理error
+	if value, ok := message.(error); ok {
+		if tmessage := e.I18nMessage(value.Error(), ErrorType, c); tmessage != "" {
+			jsonCall(c, e.HttpStatus(), Code("error"), tmessage, data, count)
+		} else {
+			jsonCall(c, e.HttpStatus(), Code("error"), value.Error(), data, count)
+		}
+
+		return
+	}
+
+	jsonCall(c, e.HttpStatus(), Code("error"), e.I18nMessage("error", ErrorType, c), data, count)
 }
 
 // ----------- i18n output -------------------

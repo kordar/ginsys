@@ -6,6 +6,8 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/kordar/goi18n"
+	"regexp"
+	"strings"
 )
 
 type ITranslation interface {
@@ -57,6 +59,17 @@ func (t *Translations) RegisterTranslationWithGI18n(tag string, section string, 
 			text := goi18n.GetSectionValue(locale, section, key, "ini").(string)
 			return ut.Add(tag, text, true) // see universal-translator for details
 		}, func(ut ut.Translator, fe validator.FieldError) string {
+
+			if fe.Param() != "" && strings.Contains(fe.Param(), "msg(") {
+				// 定义一个正则表达式来匹配圆括号中的内容
+				re := regexp.MustCompile(`msg\((.*?)\)`)
+				// 使用正则表达式查找匹配项
+				matches := re.FindAllStringSubmatch(fe.Param(), -1)
+				if len(matches) > 0 {
+					return matches[0][1]
+				}
+			}
+
 			text := goi18n.GetSectionValue(locale, "dictionary", fe.Field(), "ini").(string)
 			if text == "" {
 				text = fe.Field()
