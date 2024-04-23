@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kordar/ginsys/trans"
 	"github.com/kordar/ginsys/valid"
-	"github.com/kordar/goutil"
+	"github.com/kordar/gocfg"
 )
 
 type GinServer struct {
@@ -32,8 +32,8 @@ func (g *GinServer) AddValidate(valid ...valid.IValidation) *GinServer {
 }
 
 func (g *GinServer) Start() {
-	serverName := goutil.GetSectionValue("server", "host")
-	serverPort := goutil.GetSectionValue("server", "port")
+	serverName := gocfg.GetSectionValue("server", "host")
+	serverPort := gocfg.GetSectionValue("server", "port")
 	// 启动服务
 	_ = g.r.Run(serverName + ":" + serverPort)
 }
