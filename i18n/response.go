@@ -3,9 +3,10 @@ package i18n
 import (
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
-	"github.com/kordar/ginsys"
-	response "github.com/kordar/ginsys/resp"
-	"github.com/kordar/goi18n"
+	"github.com/kordar/gocfg"
+	response "github.com/kordar/goframework_resp"
+	responseI18n "github.com/kordar/goframework_resp_i18n"
+	"github.com/kordar/gotrans"
 )
 
 var (
@@ -31,31 +32,32 @@ func getlocale(c *gin.Context) string {
 	return locale
 }
 
-var i18n = func(message string, messagetype string, ctx *gin.Context) string {
+var i18n = func(message string, messagetype string, c interface{}) string {
+	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
 	if messagetype == response.SuccessType {
-		return goi18n.GetSectionValue(locale, "response.success", message, "ini").(string)
+		return gocfg.GetGroupSectionValue(locale, "response.success", message)
 	} else if messagetype == response.ErrorType {
-		return goi18n.GetSectionValue(locale, "response.errors", message, "ini").(string)
+		return gocfg.GetGroupSectionValue(locale, "response.errors", message)
 	} else {
-		return goi18n.GetSectionValue(locale, "response.common", message, "ini").(string)
+		return gocfg.GetGroupSectionValue(locale, "response.common", message)
 	}
 }
 
-func SetI18nFunc(f func(message string, messagetype string, ctx *gin.Context) string) {
+func SetI18nFunc(f func(message string, messagetype string, c interface{}) string) {
 	i18n = f
 }
 
-func gettrans(ctx *gin.Context) (trans ut.Translator, found bool) {
+func gettrans(c interface{}) (trans ut.Translator, found bool) {
+	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
-	return ginsys.GetTranslations().GetTrans(GetRealLocale(locale))
+	return gotrans.GetTranslations().GetTrans(GetRealLocale(locale))
 }
 
-func initResponse() {
-	response.RegResponseFunc(response.SuccessType, response.SuccessJsonI18n{I18nMessage: i18n})
-	response.RegResponseFunc(response.ErrorType, response.ErrorJsonI18n2{I18nMessage: i18n, GetTrans: gettrans})
-	response.RegResponseFunc(response.ValidErrorType, response.ErrorJsonI18n{I18nMessage: i18n, GetTrans: gettrans})
-	response.RegResponseFunc(response.OutputType, response.OutputResponseI18n{I18nMessage: i18n})
-	response.RegResponseFunc(response.UnauthorizedType, response.UnauthorizedJsonI18n{I18nMessage: i18n})
-	response.RegResponseFunc(response.TenantType, response.MultiTenantResponse{})
+func InitI18nResponse() {
+	response.RegRespFunc(response.SuccessType, responseI18n.SuccessResultI18n{I18nMessage: i18n})
+	response.RegRespFunc(response.ErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
+	response.RegRespFunc(response.ValidErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
+	response.RegRespFunc(response.OutputType, responseI18n.OutputResponseI18n{I18nMessage: i18n})
+	response.RegRespFunc(response.UnauthorizedType, responseI18n.UnauthorizedJsonI18n{I18nMessage: i18n})
 }

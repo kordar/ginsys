@@ -1,10 +1,8 @@
 package i18n
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
-// TransLocaleMiddleware //// 转换真实locale值
+// TransLocaleMiddleware // 转换真实locale值
 func TransLocaleMiddleware(key string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		s := getlocale(c)

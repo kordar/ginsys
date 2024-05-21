@@ -2,15 +2,15 @@ package resource
 
 import (
 	"github.com/gin-gonic/gin"
-	response "github.com/kordar/ginsys/resp"
-	crud "github.com/kordar/gocrud"
+	"github.com/kordar/gocrud"
+	response "github.com/kordar/goframework_resp"
 )
 
-var Manager = crud.NewResourceManager()
+var Manager = gocrud.NewResourceManager()
 
 func GetInfo(ctx *gin.Context) {
 
-	body := crud.NewSearchBody(ctx)
+	body := gocrud.NewSearchBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -26,7 +26,7 @@ func GetInfo(ctx *gin.Context) {
 }
 
 func GetList(ctx *gin.Context) {
-	body := crud.NewSearchBody(ctx)
+	body := gocrud.NewSearchBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -41,7 +41,7 @@ func GetList(ctx *gin.Context) {
 }
 
 func Add(ctx *gin.Context) {
-	body := crud.NewFormBody(ctx)
+	body := gocrud.NewFormBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -57,7 +57,7 @@ func Add(ctx *gin.Context) {
 }
 
 func Update(ctx *gin.Context) {
-	body := crud.NewFormBody(ctx)
+	body := gocrud.NewFormBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -71,7 +71,7 @@ func Update(ctx *gin.Context) {
 }
 
 func Delete(ctx *gin.Context) {
-	body := crud.NewRemoveBody(ctx)
+	body := gocrud.NewRemoveBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -86,7 +86,7 @@ func Delete(ctx *gin.Context) {
 }
 
 func Edit(ctx *gin.Context) {
-	body := crud.NewEditorBody(ctx)
+	body := gocrud.NewEditorBody(ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return

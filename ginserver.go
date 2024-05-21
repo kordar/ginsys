@@ -2,9 +2,9 @@ package ginsys
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kordar/ginsys/trans"
-	"github.com/kordar/ginsys/valid"
 	"github.com/kordar/gocfg"
+	"github.com/kordar/gotrans"
+	"github.com/kordar/govalidator"
 )
 
 type GinServer struct {
@@ -19,14 +19,14 @@ func NewGinServer() *GinServer {
 	return &GinServer{gin.Default()}
 }
 
-func (g *GinServer) OpenValidateAndTranslations(tr ...trans.ITranslation) *GinServer {
-	InitValidateAndTranslations(tr...)
+func (g *GinServer) OpenValidateAndTranslations(tr ...gotrans.ITranslation) *GinServer {
+	gotrans.InitValidateAndTranslations(tr...)
 	return g
 }
 
-func (g *GinServer) AddValidate(valid ...valid.IValidation) *GinServer {
+func (g *GinServer) AddValidate(valid ...govalidator.IValidation) *GinServer {
 	for i := range valid {
-		RegValidation(valid[i])
+		govalidator.AddValidation(valid[i])
 	}
 	return g
 }

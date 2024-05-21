@@ -1,9 +1,9 @@
-package ginsys
+package util
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/kordar/ginsys/valid"
+	"github.com/kordar/govalidator"
 	"reflect"
 )
 
@@ -12,11 +12,11 @@ func DefaultGetValidParams(c *gin.Context, params interface{}) error {
 		return err
 	}
 	// 获取翻译器
-	validator := valid.GetValidator()
-	if validator == nil {
-		return errors.New("validator nil")
+	validate := govalidator.GetValidate()
+	if validate == nil {
+		return errors.New("validate nil")
 	}
-	err := validator.Struct(params)
+	err := validate.Struct(params)
 	if err != nil {
 		return err
 	}
@@ -33,12 +33,12 @@ func DefaultGetValidParams(c *gin.Context, params interface{}) error {
 
 func CtxGetValidParams(c *gin.Context, params interface{}, targetService interface{}, methods ...string) error {
 	// 获取验证器
-	validator := valid.GetValidator()
-	if validator == nil {
-		return errors.New("validator nil")
+	validate := govalidator.GetValidate()
+	if validate == nil {
+		return errors.New("validate nil")
 	}
 
-	err := validator.Struct(params)
+	err := validate.Struct(params)
 	if err != nil {
 		return err
 	}
