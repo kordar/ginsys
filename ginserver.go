@@ -15,8 +15,16 @@ func (g *GinServer) R() *gin.Engine {
 	return g.r
 }
 
+func NewGinEngineServer(engine *gin.Engine) *GinServer {
+	mode := gocfg.GetSystemValue("gin_mode")
+	if mode != "" {
+		SetGinLevel(mode)
+	}
+	return &GinServer{engine}
+}
+
 func NewGinServer() *GinServer {
-	return &GinServer{gin.Default()}
+	return NewGinEngineServer(gin.Default())
 }
 
 func (g *GinServer) OpenValidateAndTranslations(tr ...gotrans.ITranslation) *GinServer {

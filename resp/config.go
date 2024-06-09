@@ -1,4 +1,4 @@
-package i18n
+package resp
 
 import (
 	"github.com/gin-gonic/gin"
@@ -9,6 +9,9 @@ import (
 func InitI18n(dir string) {
 	gocfg.InitConfigWithSubDir(dir, "ini", "toml", "yaml")
 	// 配置response国际化支持
+}
+
+func InitJsonResp001() {
 	goframework_resp.RegResultCallFunc(func(c interface{}, httpStatus int, code int, message string, data interface{}, count int64) {
 		ctx := c.(*gin.Context)
 		if data == nil {

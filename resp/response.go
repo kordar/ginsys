@@ -1,12 +1,14 @@
-package i18n
+package resp
 
 import (
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 	"github.com/kordar/gocfg"
 	response "github.com/kordar/goframework_resp"
 	responseI18n "github.com/kordar/goframework_resp_i18n"
 	"github.com/kordar/gotrans"
+	"net/http"
 )
 
 var (
@@ -54,10 +56,32 @@ func gettrans(c interface{}) (trans ut.Translator, found bool) {
 	return gotrans.GetTranslations().GetTrans(GetRealLocale(locale))
 }
 
+type ErrWithValidate struct {
+}
+
+func (e ErrWithValidate) HttpStatus() int {
+	return http.StatusOK
+}
+
+func (e ErrWithValidate) Result(c interface{}, message interface{}, data interface{}, count int64) {
+	if err, ok := message.(validator.ValidationErrors); ok {
+		for _, ee := range err {
+			response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), ee.Error(), data, count)
+			return
+		}
+	}
+	response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), message.(string), data, count)
+}
+
 func InitI18nResponse() {
 	response.RegRespFunc(response.SuccessType, responseI18n.SuccessResultI18n{I18nMessage: i18n})
 	response.RegRespFunc(response.ErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
 	response.RegRespFunc(response.ValidErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
 	response.RegRespFunc(response.OutputType, responseI18n.OutputResponseI18n{I18nMessage: i18n})
 	response.RegRespFunc(response.UnauthorizedType, responseI18n.UnauthorizedJsonI18n{I18nMessage: i18n})
+}
+
+func InitI18nResponse002() {
+	response.RegRespFunc(response.ErrorType, ErrWithValidate{})
+	response.RegRespFunc(response.ValidErrorType, ErrWithValidate{})
 }
