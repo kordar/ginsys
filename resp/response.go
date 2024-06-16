@@ -70,6 +70,10 @@ func (e ErrWithValidate) Result(c interface{}, message interface{}, data interfa
 			return
 		}
 	}
+	if err, ok := message.(error); ok {
+		response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), err.Error(), data, count)
+		return
+	}
 	response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), message.(string), data, count)
 }
 
