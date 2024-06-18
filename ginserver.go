@@ -2,6 +2,8 @@ package ginsys
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/kordar/gocfg"
 	"github.com/kordar/gotrans"
 	"github.com/kordar/govalidator"
@@ -20,6 +22,10 @@ func NewGinEngineServer(engine *gin.Engine) *GinServer {
 	if mode != "" {
 		SetGinLevel(mode)
 	}
+
+	validate := binding.Validator.Engine().(*validator.Validate)
+	govalidator.LoadValidate(validate)
+
 	return &GinServer{engine}
 }
 
