@@ -6,11 +6,11 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.20.0
-	github.com/kordar/gocfg v0.0.2
+	github.com/kordar/gocfg v0.0.5
 	github.com/kordar/gocrud v1.0.10
 	github.com/kordar/goframework_resp v0.0.2
 	github.com/kordar/goframework_resp_i18n v0.0.0-20240520073306-070f5527fd3e
-	github.com/kordar/gotrans v0.0.1
+	github.com/kordar/gotrans v0.0.2
 	github.com/kordar/govalidator v0.0.1
 )
 
