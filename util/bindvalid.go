@@ -7,15 +7,25 @@ import (
 	"reflect"
 )
 
+// DefaultGetValidParams 手动触发翻译器
 func DefaultGetValidParams(c *gin.Context, params interface{}) error {
+	// 1、触发gin自带的翻译组件进行参数验证
 	if err := c.ShouldBind(params); err != nil {
 		return err
 	}
-	// 获取翻译器
+
+	/**
+	 * 2、获取系统中现有的翻译组件（一般服务启动将gin默认翻译组件注入）
+	 *    validate := binding.Validator.Engine().(*validator.Validate)
+	 *    govalidator.LoadValidate(validate)
+	 *
+	 */
 	validate := govalidator.GetValidate()
 	if validate == nil {
-		return errors.New("validate nil")
+		return errors.New("no active \"validate\" found")
 	}
+
+	// 3、手动触发验证
 	err := validate.Struct(params)
 	if err != nil {
 		return err
@@ -35,7 +45,7 @@ func CtxGetValidParams(c *gin.Context, params interface{}, targetService interfa
 	// 获取验证器
 	validate := govalidator.GetValidate()
 	if validate == nil {
-		return errors.New("validate nil")
+		return errors.New("no active \"validate\" found")
 	}
 
 	err := validate.Struct(params)

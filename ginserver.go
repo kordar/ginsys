@@ -48,7 +48,11 @@ func (g *GinServer) AddValidate(valid ...govalidator.IValidation) *GinServer {
 func (g *GinServer) Start() {
 	serverName := gocfg.GetSectionValue("server", "host")
 	serverPort := gocfg.GetSectionValue("server", "port")
-	// 启动服务
+	g.StartD(serverName, serverPort)
+}
+
+// StartD 启动服务
+func (g *GinServer) StartD(serverName string, serverPort string) {
 	_ = g.r.Run(serverName + ":" + serverPort)
 }
 

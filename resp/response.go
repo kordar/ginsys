@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	"github.com/kordar/gocfg"
 	response "github.com/kordar/goframework_resp"
 	responseI18n "github.com/kordar/goframework_resp_i18n"
 	"github.com/kordar/gotrans"
@@ -19,6 +18,9 @@ func SetTransLocaleMapValue(key string, value string) {
 	translocalemap[key] = value
 }
 
+// GetRealLocale 翻译器的国际化name和本地上传的locale名称可能不符，
+// 例如实际locale=zh-CN，翻译器注册中文名为zh，
+// 此时需要将zh-CN映射为zh以便正确获取翻译器。
 func GetRealLocale(locale string) string {
 	if translocalemap[locale] == "" {
 		return locale
@@ -34,26 +36,34 @@ func getlocale(c *gin.Context) string {
 	return locale
 }
 
-var i18n = func(message string, messagetype string, c interface{}) string {
+var i18nFunc = func(message string, messagetype string, c interface{}) string {
 	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
 	if messagetype == response.SuccessType {
-		return gocfg.GetGroupSectionValue(locale, "response.success", message)
+		return gotrans.GetSectionValue(locale, "response.success", message)
 	} else if messagetype == response.ErrorType {
-		return gocfg.GetGroupSectionValue(locale, "response.errors", message)
+		return gotrans.GetSectionValue(locale, "response.errors", message)
 	} else {
-		return gocfg.GetGroupSectionValue(locale, "response.common", message)
+		return gotrans.GetSectionValue(locale, "response.common", message)
 	}
 }
 
 func SetI18nFunc(f func(message string, messagetype string, c interface{}) string) {
-	i18n = f
+	i18nFunc = f
 }
 
 func gettrans(c interface{}) (trans ut.Translator, found bool) {
 	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
 	return gotrans.GetTranslations().GetTrans(GetRealLocale(locale))
+}
+
+func InitI18nResponse() {
+	response.RegRespFunc(response.SuccessType, responseI18n.SuccessResultI18n{I18nMessage: i18nFunc})
+	response.RegRespFunc(response.ErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18nFunc, GetTrans: gettrans})
+	response.RegRespFunc(response.ValidErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18nFunc, GetTrans: gettrans})
+	response.RegRespFunc(response.OutputType, responseI18n.OutputResponseI18n{I18nMessage: i18nFunc})
+	response.RegRespFunc(response.UnauthorizedType, responseI18n.UnauthorizedJsonI18n{I18nMessage: i18nFunc})
 }
 
 type ErrWithValidate struct {
@@ -75,14 +85,6 @@ func (e ErrWithValidate) Result(c interface{}, message interface{}, data interfa
 		return
 	}
 	response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), message.(string), data, count)
-}
-
-func InitI18nResponse() {
-	response.RegRespFunc(response.SuccessType, responseI18n.SuccessResultI18n{I18nMessage: i18n})
-	response.RegRespFunc(response.ErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
-	response.RegRespFunc(response.ValidErrorType, responseI18n.ErrorResultI18n{I18nMessage: i18n, GetTrans: gettrans})
-	response.RegRespFunc(response.OutputType, responseI18n.OutputResponseI18n{I18nMessage: i18n})
-	response.RegRespFunc(response.UnauthorizedType, responseI18n.UnauthorizedJsonI18n{I18nMessage: i18n})
 }
 
 func InitI18nResponse002() {
