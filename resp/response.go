@@ -1,9 +1,11 @@
 package resp
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/kordar/gocfg"
 	response "github.com/kordar/goframework_resp"
 	responseI18n "github.com/kordar/goframework_resp_i18n"
 	"github.com/kordar/gotrans"
@@ -12,7 +14,17 @@ import (
 
 var (
 	translocalemap = map[string]string{"zh-CN": "zh"}
+	headerKey      = "Locale"
+	defaultLocale  = "en"
 )
+
+func SetHeaderKey(key string) {
+	headerKey = key
+}
+
+func SetDefaultLocale(name string) {
+	defaultLocale = name
+}
 
 func SetTransLocaleMapValue(key string, value string) {
 	translocalemap[key] = value
@@ -23,15 +35,15 @@ func SetTransLocaleMapValue(key string, value string) {
 // 此时需要将zh-CN映射为zh以便正确获取翻译器。
 func GetRealLocale(locale string) string {
 	if translocalemap[locale] == "" {
-		return locale
+		return defaultLocale
 	}
 	return translocalemap[locale]
 }
 
 func getlocale(c *gin.Context) string {
-	locale := c.GetHeader("Locale")
+	locale := c.GetHeader(headerKey)
 	if locale == "" {
-		return "en"
+		return defaultLocale
 	}
 	return locale
 }
@@ -40,11 +52,11 @@ var i18nFunc = func(message string, messagetype string, c interface{}) string {
 	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
 	if messagetype == response.SuccessType {
-		return gotrans.GetSectionValue(locale, "response.success", message)
+		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.success.%s", message), "language")
 	} else if messagetype == response.ErrorType {
-		return gotrans.GetSectionValue(locale, "response.errors", message)
+		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.errors.%s", message), "language")
 	} else {
-		return gotrans.GetSectionValue(locale, "response.common", message)
+		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.common.%s", message), "language")
 	}
 }
 
@@ -55,7 +67,7 @@ func SetI18nFunc(f func(message string, messagetype string, c interface{}) strin
 func gettrans(c interface{}) (trans ut.Translator, found bool) {
 	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
-	return gotrans.GetTranslations().GetTrans(GetRealLocale(locale))
+	return gotrans.Get().GetTranslator(GetRealLocale(locale))
 }
 
 func InitI18nResponse() {
