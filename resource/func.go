@@ -10,13 +10,13 @@ var Manager = gocrud.NewResourceManager()
 
 func GetInfo(ctx *gin.Context) {
 
-	body := gocrud.NewSearchBody(ctx)
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewSearchBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
 
-	apiName := ctx.Param("apiName")
 	if vo, err := Manager.SelectOne(apiName, body); err == nil {
 		response.Success(ctx, "success", vo)
 	} else {
@@ -26,13 +26,14 @@ func GetInfo(ctx *gin.Context) {
 }
 
 func GetList(ctx *gin.Context) {
-	body := gocrud.NewSearchBody(ctx)
+
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewSearchBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
 
-	apiName := ctx.Param("apiName")
 	if vo, err := Manager.Select(apiName, body); err == nil {
 		response.Data(ctx, "success", vo.Data, vo.Count)
 	} else {
@@ -41,13 +42,14 @@ func GetList(ctx *gin.Context) {
 }
 
 func Add(ctx *gin.Context) {
-	body := gocrud.NewFormBody(ctx)
+
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewFormBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
 
-	apiName := ctx.Param("apiName")
 	if obj, err := Manager.Add(apiName, body); err == nil {
 		response.Success(ctx, "success", obj)
 	} else {
@@ -57,12 +59,14 @@ func Add(ctx *gin.Context) {
 }
 
 func Update(ctx *gin.Context) {
-	body := gocrud.NewFormBody(ctx)
+
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewFormBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
-	apiName := ctx.Param("apiName")
+
 	if obj, err := Manager.Update(apiName, body); err == nil {
 		response.Success(ctx, "success", obj)
 	} else {
@@ -71,13 +75,14 @@ func Update(ctx *gin.Context) {
 }
 
 func Delete(ctx *gin.Context) {
-	body := gocrud.NewRemoveBody(ctx)
+
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewRemoveBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
 
-	apiName := ctx.Param("apiName")
 	if err := Manager.Delete(apiName, body); err == nil {
 		response.Success(ctx, "success", nil)
 	} else {
@@ -86,13 +91,14 @@ func Delete(ctx *gin.Context) {
 }
 
 func Edit(ctx *gin.Context) {
-	body := gocrud.NewEditorBody(ctx)
+
+	apiName := ctx.Param("apiName")
+	body := gocrud.NewEditorBody(Manager.Driver(apiName))
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
 	}
 
-	apiName := ctx.Param("apiName")
 	if err := Manager.Edit(apiName, body); err == nil {
 		response.Success(ctx, "success", nil)
 	} else {
@@ -102,9 +108,9 @@ func Edit(ctx *gin.Context) {
 }
 
 func Configs(ctx *gin.Context) {
-	locale := ctx.GetHeader("Locale")
+
 	apiName := ctx.Param("apiName")
-	if configs, err := Manager.Configs(apiName, locale); err == nil {
+	if configs, err := Manager.Configs(apiName); err == nil {
 		response.Success(ctx, "success", configs)
 	} else {
 		response.Error(ctx, err, nil)
