@@ -2,6 +2,10 @@ module github.com/kordar/ginsys
 
 go 1.18
 
+replace (
+	github.com/kordar/gocrud => ../gocrud
+)
+
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/universal-translator v0.18.1
