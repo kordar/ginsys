@@ -6,18 +6,18 @@ import (
 	response "github.com/kordar/goframework_resp"
 )
 
-var Manager = gocrud.NewResourceManager[interface{}, *gin.Context]()
+var Manager = gocrud.NewResourceManager()
 
-func GetApiNameAndDriver(ctx *gin.Context) (string, string) {
+func apiAndDriverName(ctx *gin.Context) (string, string) {
 	apiName := ctx.Param("apiName")
-	driverName := Manager.DriverName(apiName)
+	driverName := Manager.DriverName(apiName, ctx)
 	return apiName, driverName
 }
 
 func GetInfo(ctx *gin.Context) {
 
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewSearchBody[interface{}, *gin.Context](driverName, ctx)
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewSearchBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -33,8 +33,8 @@ func GetInfo(ctx *gin.Context) {
 
 func GetList(ctx *gin.Context) {
 
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewSearchBody[interface{}, *gin.Context](driverName, ctx)
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewSearchBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -49,8 +49,8 @@ func GetList(ctx *gin.Context) {
 
 func Add(ctx *gin.Context) {
 
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewFormBody[interface{}, *gin.Context](driverName, ctx)
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewFormBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -65,8 +65,9 @@ func Add(ctx *gin.Context) {
 }
 
 func Update(ctx *gin.Context) {
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewFormBody[interface{}, *gin.Context](driverName, ctx)
+
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewFormBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -81,8 +82,8 @@ func Update(ctx *gin.Context) {
 
 func Delete(ctx *gin.Context) {
 
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewRemoveBody[interface{}, *gin.Context](driverName, ctx)
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewRemoveBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -97,9 +98,8 @@ func Delete(ctx *gin.Context) {
 
 func Edit(ctx *gin.Context) {
 
-	apiName, driverName := GetApiNameAndDriver(ctx)
-	body := gocrud.NewEditorBody[interface{}, *gin.Context](driverName, ctx)
-
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewEditorBody(driverName, ctx)
 	if err := ctx.ShouldBind(&body); err != nil {
 		response.Error(ctx, err, nil)
 		return
@@ -115,9 +115,8 @@ func Edit(ctx *gin.Context) {
 
 func Configs(ctx *gin.Context) {
 
-	apiName, _ := GetApiNameAndDriver(ctx)
-	//locale := ctx.GetHeader("Locale")
-	if configs, err := Manager.Configs(apiName); err == nil {
+	apiName := ctx.Param("apiName")
+	if configs, err := Manager.Configs(apiName, ctx); err == nil {
 		response.Success(ctx, "success", configs)
 	} else {
 		response.Error(ctx, err, nil)
