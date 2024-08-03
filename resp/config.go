@@ -13,6 +13,7 @@ func InitI18n(dir string) {
 
 func InitJsonResp001() {
 	goframework_resp.RegResultCallFunc(func(c interface{}, httpStatus int, code int, message string, data interface{}, count int64) {
+
 		ctx := c.(*gin.Context)
 		if data == nil {
 			ctx.JSON(httpStatus, map[string]interface{}{"code": code, "message": message})

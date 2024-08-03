@@ -2,9 +2,7 @@ module github.com/kordar/ginsys
 
 go 1.18
 
-replace (
-	github.com/kordar/gocrud => ../gocrud
-)
+replace github.com/kordar/gocrud => ../gocrud
 
 require (
 	github.com/gin-gonic/gin v1.10.0
@@ -19,7 +17,6 @@ require (
 )
 
 require (
-	github.com/Unknwon/goconfig v1.0.0 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
@@ -32,11 +29,8 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
-	github.com/kordar/goi18n v1.0.3 // indirect
 	github.com/kordar/gologger v0.0.7 // indirect
 	github.com/kordar/goutil v1.1.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
@@ -64,5 +58,4 @@ require (
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/gorm v1.22.4 // indirect
 )
