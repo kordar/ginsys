@@ -8,7 +8,7 @@ import (
 
 // DefaultGetValidParams 手动触发翻译器
 func DefaultGetValidParams(c *gin.Context, params interface{}) error {
-	
+
 	// 1、触发gin自带的翻译组件进行参数验证
 	if err := c.ShouldBind(params); err != nil {
 		return err
@@ -32,7 +32,7 @@ func DefaultGetValidParams(c *gin.Context, params interface{}) error {
 	}
 
 	// TODO 通过反射执行验证暂关闭
-	//refParams := reflect.ValueOf(params) // 需要传入指针，后面再解析
+	//refParams := reflectect.ValueOf(params) // 需要传入指针，后面再解析
 	//validMethod := refParams.MethodByName("Valid")
 	//if validMethod.IsValid() {
 	//	v := validMethod.Call(make([]reflect.Value, 0))

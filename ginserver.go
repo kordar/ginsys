@@ -3,7 +3,6 @@ package ginsys
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/kordar/gocfg"

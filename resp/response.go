@@ -86,20 +86,70 @@ func (e ErrWithValidate) HttpStatus() int {
 }
 
 func (e ErrWithValidate) Result(c interface{}, message interface{}, data interface{}, count int64) {
-	if err, ok := message.(validator.ValidationErrors); ok {
-		for _, ee := range err {
-			response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), ee.Error(), data, count)
-			return
+
+	if ve, ok := message.(validator.ValidationErrors); ok {
+		trans := map[string]string{}
+		for _, fe := range ve {
+
+			//logger.Infof("=========field======%+v", fe.Field())
+			//logger.Infof("=========param======%+v", fe.Param())
+			//logger.Infof("=========tag======%+v", fe.Tag())
+			//logger.Infof("=========error======%+v", fe.Error())
+			//logger.Infof("=========StructField======%+v", fe.StructField())
+			//logger.Infof("=========Namespace======%+v", fe.Namespace())
+			//logger.Infof("=========StructNamespace======%+v", fe.StructNamespace())
+			//logger.Infof("=========ActualTag======%+v", fe.ActualTag())
+			//logger.Infof("=========xxxxxxxxxxx======%+v", fmt.Sprintf("%s.%s", fe.StructNamespace(), fe.ActualTag()))
+
+			value := gocfg.GetSectionValue("validate.message", fmt.Sprintf("%s.%s", fe.StructNamespace(), fe.ActualTag()))
+			if value == "" {
+				value = fmt.Sprintf("Field validation for '%s' failed on the '%s' tag", fe.Field(), fe.ActualTag())
+			}
+			trans[fe.Field()] = value
 		}
-	}
-	if err, ok := message.(error); ok {
-		response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), err.Error(), data, count)
+		response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("valid"), "", trans, count)
 		return
 	}
-	response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), message.(string), data, count)
+
+	if err, ok := message.(error); ok {
+		msg := responseValue(err.Error(), "response.errors")
+		response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), msg, data, count)
+		return
+	}
+
+	msg := responseValue(message.(string), "response.errors")
+	response.GetResultCallFunc()(c, e.HttpStatus(), response.Code("error"), msg, data, count)
 }
 
-func InitI18nResponse002() {
+// SuccessResult 成功
+type SuccessResult struct {
+}
+
+func (s SuccessResult) HttpStatus() int {
+	return http.StatusOK
+}
+
+func (s SuccessResult) Result(c interface{}, message interface{}, data interface{}, count int64) {
+	if value, ok := message.(string); ok && value != "" {
+		msg := responseValue("success", "response.success")
+		response.GetResultCallFunc()(c, s.HttpStatus(), response.Code("success"), msg, data, count)
+		return
+	}
+
+	msg := responseValue("success", "response.success")
+	response.GetResultCallFunc()(c, s.HttpStatus(), response.Code("success"), msg, data, count)
+}
+
+func responseValue(value string, section string) string {
+	sectionValue := gocfg.GetSectionValue(section, value)
+	if sectionValue != "" {
+		return sectionValue
+	}
+	return value
+}
+
+func InitResponse002() {
 	response.RegRespFunc(response.ErrorType, ErrWithValidate{})
 	response.RegRespFunc(response.ValidErrorType, ErrWithValidate{})
+	response.RegRespFunc(response.SuccessType, SuccessResult{})
 }
