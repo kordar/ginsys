@@ -23,7 +23,7 @@ func GetInfo(ctx *gin.Context) {
 		return
 	}
 
-	if vo, err := Manager.SelectOne(apiName, body); err == nil {
+	if vo, err := Manager.ReadOne(apiName, body); err == nil {
 		response.Success(ctx, "success", vo)
 	} else {
 		response.Error(ctx, err, nil)
@@ -40,7 +40,7 @@ func GetList(ctx *gin.Context) {
 		return
 	}
 
-	if vo, err := Manager.Select(apiName, body); err == nil {
+	if vo, err := Manager.Read(apiName, body); err == nil {
 		response.Data(ctx, "success", vo.Data, vo.Count)
 	} else {
 		response.Error(ctx, err, nil)
@@ -56,7 +56,7 @@ func Add(ctx *gin.Context) {
 		return
 	}
 
-	if obj, err := Manager.Add(apiName, body); err == nil {
+	if obj, err := Manager.Create(apiName, body); err == nil {
 		response.Success(ctx, "success", obj)
 	} else {
 		response.Error(ctx, err, nil)

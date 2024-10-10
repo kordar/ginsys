@@ -1,20 +1,22 @@
 package resp
 
 import (
+	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/kordar/gocfg"
 	"github.com/kordar/gocrud"
 )
 
 func InitCrudLangFn() {
-	gocrud.SetLangFn(func(args ...interface{}) string {
-		if args == nil || len(args) == 0 {
-			return ""
-		}
-		c := args[0].(*gin.Context)
-		locale := c.GetHeader(headerKey)
-		if locale == "" {
-			return defaultLocale
-		}
-		return locale
-	})
+	gocrud.MessageFn = func(c context.Context, message string) string {
+		ctx := c.(*gin.Context)
+		locale := getlocale(ctx)
+		return gocfg.GetSectionValue(fmt.Sprintf("%s.gocrud.message", locale), message, "language")
+	}
+}
+
+func GetLocale(c context.Context) string {
+	ctx := c.(*gin.Context)
+	return getlocale(ctx)
 }

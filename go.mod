@@ -2,18 +2,17 @@ module github.com/kordar/ginsys
 
 go 1.18
 
-replace github.com/kordar/gocrud => ../gocrud
-
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/kordar/gocfg v0.0.9
-	github.com/kordar/gocrud v1.1.0
+	github.com/kordar/gocrud v1.1.3
 	github.com/kordar/goframework_resp v0.0.2
 	github.com/kordar/goframework_resp_i18n v0.0.1
 	github.com/kordar/gotrans v0.1.0
 	github.com/kordar/govalidator v0.1.2
+	github.com/spf13/cast v1.3.1
 )
 
 require (
@@ -31,7 +30,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
-	github.com/kordar/gologger v0.0.7 // indirect
+	github.com/kordar/gologger v0.0.8 // indirect
 	github.com/kordar/goutil v1.1.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
@@ -42,7 +41,6 @@ require (
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.8.1 // indirect
