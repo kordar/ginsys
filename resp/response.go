@@ -52,11 +52,11 @@ var i18nFunc = func(message string, messagetype string, c interface{}) string {
 	ctx := c.(*gin.Context)
 	locale := getlocale(ctx)
 	if messagetype == response.SuccessType {
-		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.success.%s", message), "language")
+		return gocfg.GetSectionValueM(fmt.Sprintf("response.success.%s", message), "language", locale)
 	} else if messagetype == response.ErrorType {
-		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.errors.%s", message), "language")
+		return gocfg.GetSectionValueM(fmt.Sprintf("response.errors.%s", message), "language", locale)
 	} else {
-		return gocfg.GetSectionValue(locale, fmt.Sprintf("response.common.%s", message), "language")
+		return gocfg.GetSectionValueM(fmt.Sprintf("response.common.%s", message), "language", locale)
 	}
 }
 
@@ -152,4 +152,6 @@ func InitResponse002() {
 	response.RegRespFunc(response.ErrorType, ErrWithValidate{})
 	response.RegRespFunc(response.ValidErrorType, ErrWithValidate{})
 	response.RegRespFunc(response.SuccessType, SuccessResult{})
+	response.RegRespFunc(response.UnauthorizedType, response.UnauthorizedResponse{})
+	response.RegRespFunc(response.OutputType, response.OutputResponse{})
 }

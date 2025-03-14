@@ -6,10 +6,10 @@ import (
 )
 
 func I18n(locale string, section string) string {
-	return gocfg.GetSectionValue(locale, section, "language")
+	return gocfg.GetSectionValueM(section, "language", locale)
 }
 
 func I18ns(locale string, section string) map[string]interface{} {
-	v := gocfg.Get(locale, section, "language")
+	v := gocfg.GetM(section+".language", locale)
 	return cast.ToStringMap(v)
 }

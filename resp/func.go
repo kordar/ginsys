@@ -12,7 +12,7 @@ func InitCrudLangFn() {
 	gocrud.MessageFn = func(c context.Context, message string) string {
 		ctx := c.(*gin.Context)
 		locale := getlocale(ctx)
-		return gocfg.GetSectionValue(fmt.Sprintf("%s.gocrud.message", locale), message, "language")
+		return gocfg.GetSectionValueM(fmt.Sprintf("%s.gocrud.message", locale), message, "language")
 	}
 }
 
