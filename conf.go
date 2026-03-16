@@ -6,10 +6,10 @@ func SetGinLevel(level string) {
 	switch level {
 	case "debug":
 		gin.SetMode(gin.DebugMode)
-		break
+		return
 	case "test":
 		gin.SetMode(gin.TestMode)
-		break
+		return
 	default:
 		gin.SetMode(gin.ReleaseMode)
 	}

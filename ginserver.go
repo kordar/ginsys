@@ -64,7 +64,7 @@ func (g *GinServer) AddValidate(validations ...govalidator.IValidation) *GinServ
 			},
 			func(locale string, fe validator.FieldError) []string {
 				n := validation.I18n(fe, locale)
-				if n == nil || len(n) == 0 {
+				if len(n) == 0 {
 					text := gocfg.GetSectionValueM("dictionary."+fe.StructNamespace(), "language", locale)
 					if text == "" {
 						text = fe.Field()

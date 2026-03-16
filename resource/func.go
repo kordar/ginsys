@@ -1,10 +1,17 @@
 package resource
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kordar/gocrud"
 	response "github.com/kordar/goframework_resp"
 )
+
+type FileResourceService interface {
+	Download(body gocrud.SearchBody) (err error)
+	Upload(body gocrud.FormBody) (obj any, err error)
+}
 
 var Manager = gocrud.NewResourceManager()
 
@@ -120,5 +127,57 @@ func Configs(ctx *gin.Context) {
 		response.Success(ctx, "success", configs)
 	} else {
 		response.Error(ctx, err, nil)
+	}
+}
+
+func Upload(ctx *gin.Context) {
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewFormBody(driverName, ctx)
+	if err := ctx.ShouldBind(&body); err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	s, err := Manager.GetResourceService(apiName, ctx)
+	if err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	if fileService, ok := s.(FileResourceService); ok {
+		if obj, err2 := fileService.Upload(body); err2 == nil {
+			response.Success(ctx, "success", obj)
+		} else {
+			response.Error(ctx, err2, nil)
+		}
+	} else {
+		response.Error(ctx, errors.New("not implemented"), nil)
+	}
+
+}
+
+func Download(ctx *gin.Context) {
+
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewSearchBody(driverName, ctx)
+	if err := ctx.ShouldBind(&body); err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	s, err := Manager.GetResourceService(apiName, ctx)
+	if err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	if fileService, ok := s.(FileResourceService); ok {
+		if err2 := fileService.Download(body); err2 == nil {
+			// response.Data(ctx, "success", nil, 0)
+		} else {
+			response.Error(ctx, err2, nil)
+		}
+	} else {
+		response.Error(ctx, errors.New("not implemented"), nil)
 	}
 }
