@@ -8,11 +8,6 @@ import (
 	response "github.com/kordar/goframework_resp"
 )
 
-type FileResourceService interface {
-	Download(body gocrud.SearchBody) (err error)
-	Upload(body gocrud.FormBody) (obj any, err error)
-}
-
 var Manager = gocrud.NewResourceManager()
 
 func apiAndDriverName(ctx *gin.Context) (string, string) {
@@ -144,14 +139,14 @@ func Upload(ctx *gin.Context) {
 		return
 	}
 
-	if fileService, ok := s.(FileResourceService); ok {
-		if obj, err2 := fileService.Upload(body); err2 == nil {
+	if uploadResourceService, ok := s.(UploadResourceService); ok {
+		if obj, err2 := uploadResourceService.Upload(body); err2 == nil {
 			response.Success(ctx, "success", obj)
 		} else {
 			response.Error(ctx, err2, nil)
 		}
 	} else {
-		response.Error(ctx, errors.New("not implemented"), nil)
+		response.Error(ctx, errors.New("upload is not supported: please implement the UploadResourceService interface"), nil)
 	}
 
 }
@@ -171,13 +166,13 @@ func Download(ctx *gin.Context) {
 		return
 	}
 
-	if fileService, ok := s.(FileResourceService); ok {
-		if err2 := fileService.Download(body); err2 == nil {
+	if downloadResourceService, ok := s.(DownloadResourceService); ok {
+		if err2 := downloadResourceService.Download(body); err2 == nil {
 			// response.Data(ctx, "success", nil, 0)
 		} else {
 			response.Error(ctx, err2, nil)
 		}
 	} else {
-		response.Error(ctx, errors.New("not implemented"), nil)
+		response.Error(ctx, errors.New("download is not supported: please implement the DownloadResourceService interface"), nil)
 	}
 }

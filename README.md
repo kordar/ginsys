@@ -147,5 +147,17 @@ curl -X POST http://localhost:9099/tt \
 - `resource.Delete`
 - `resource.Edit`
 - `resource.Configs`
+- `resource.Upload`
+- `resource.Download`
 
 你需要按 `gocrud` 的方式提前为 `resource.Manager` 配置资源、驱动与执行器。
+
+其中 `Upload/Download` 依赖资源服务实现以下可选接口：
+
+- `resource.UploadResourceService`：`Upload(body gocrud.FormBody) (obj any, err error)`
+- `resource.DownloadResourceService`：`Download(body gocrud.SearchBody) error`
+
+当资源服务未实现对应接口时，接口会返回明确错误提示：
+
+- upload：`upload is not supported: please implement the UploadResourceService interface`
+- download：`download is not supported: please implement the DownloadResourceService interface`
