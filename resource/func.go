@@ -177,7 +177,7 @@ func Download(ctx *gin.Context) {
 	}
 }
 
-func Execute(ctx *gin.Context, callback func(any)) {
+func Execute(ctx *gin.Context, callback func(any, any)) {
 
 	apiName, driverName := apiAndDriverName(ctx)
 	body := gocrud.NewSearchBody(driverName, ctx)
@@ -192,7 +192,7 @@ func Execute(ctx *gin.Context, callback func(any)) {
 		return
 	}
 
-	callback(s)
+	callback(s, body)
 
 	// if searchTotalResourceService, ok := s.(T); ok {
 	// 	if data, err2 := searchTotalResourceService.Total(body); err2 == nil {
