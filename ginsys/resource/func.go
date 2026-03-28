@@ -176,3 +176,31 @@ func Download(ctx *gin.Context) {
 		response.Error(ctx, errors.New("download is not supported: please implement the DownloadResourceService interface"), nil)
 	}
 }
+
+func Execute(ctx *gin.Context, callback func(any)) {
+
+	apiName, driverName := apiAndDriverName(ctx)
+	body := gocrud.NewSearchBody(driverName, ctx)
+	if err := ctx.ShouldBind(&body); err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	s, err := Manager.GetResourceService(apiName, ctx)
+	if err != nil {
+		response.Error(ctx, err, nil)
+		return
+	}
+
+	callback(s)
+
+	// if searchTotalResourceService, ok := s.(T); ok {
+	// 	if data, err2 := searchTotalResourceService.Total(body); err2 == nil {
+	// 		response.Success(ctx, "success", data)
+	// 	} else {
+	// 		response.Error(ctx, err2, nil)
+	// 	}
+	// } else {
+	// 	response.Error(ctx, errors.New("total is not supported: please implement the SearchTotalResourceService interface"), nil)
+	// }
+}
